@@ -33,7 +33,8 @@ jobs:
       - name: 构建页面目录
         run: |
           mkdir -p _site
-          cp jsonToExcel.html _site/ || echo "文件复制失败，检查路径"
+          cp jsonToExcel.html _site/index.html
+          cp jsonToExcel.html _site/
           ls -la _site
 
       - name: 上传 Pages 工件
