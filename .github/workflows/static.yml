@@ -34,12 +34,12 @@ jobs:
       - name: 设置 Pages
         uses: actions/configure-pages@v5
         with:
-          enablement: true  # 确保 Pages 已启用
+          enablement: true # 确保 Pages 已启用
       - name: 上传工件
         uses: actions/upload-pages-artifact@v3
         with:
           # 仅上传特定的 HTML 文件
-          path: 'jsonToExcel.html'
+          path: "./jsonToExcel.html" # Ensure the path is correctly referenced
       - name: 部署到 GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
