@@ -30,11 +30,17 @@ jobs:
       - name: 设置 Pages
         uses: actions/configure-pages@v5
 
+      - name: 创建 .nojekyll 文件以禁用 Jekyll 处理
+        run: touch _site/.nojekyll
+
       - name: 构建页面目录
         run: |
           mkdir -p _site
+          # 将内容复制到 _site 目录，确保 index.html 存在于根目录
           cp jsonToExcel.html _site/index.html
-          cp jsonToExcel.html _site/
+          # 同时保留原始文件名的副本
+          cp jsonToExcel.html _site/jsonToExcel.html
+          # 显示构建的目录内容
           ls -la _site
 
       - name: 上传 Pages 工件
