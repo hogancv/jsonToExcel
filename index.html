@@ -3,110 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JSON 转 Excel</title>
+    <title>JSON ↔ Excel 工具</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            padding: 20px;
-            background-color: #f4f4f4;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(135deg, #e0eafc, #cfdef3);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 8px 24px rgba(60,60,60,0.08);
+            padding: 32px 28px 24px 28px;
         }
         h1 {
-            color: #333;
+            text-align: center;
+            color: #2274a5;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+        }
+        .section {
+            margin-bottom: 32px;
         }
         label {
-            font-weight: bold;
-            margin-top: 10px;
             display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #3a3a3a;
         }
         textarea, input[type="file"] {
             width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
             box-sizing: border-box;
+            padding: 12px;
+            margin-bottom: 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 15px;
+            background: #f6f9fb;
+            transition: border .2s;
         }
-        button {
-            background-color: #28a745;
-            color: white;
-            padding: 10px 15px;
+        textarea:focus, input[type="file"]:focus {
+            border-color: #2274a5;
+            outline: none;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background-color: #2274a5;
+            color: #fff;
+            padding: 10px 22px;
             border: none;
-            border-radius: 4px;
-            cursor: pointer;
+            border-radius: 5px;
             font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 4px rgba(34,116,165,0.07);
+            transition: background .2s, transform .1s;
         }
-        button:hover {
-            background-color: #218838;
+        .btn:hover {
+            background-color: #165177;
+            transform: translateY(-2px) scale(1.03);
         }
-        hr {
-            margin: 20px 0;
+        .output-label {
+            margin-top: 8px;
+        }
+        .divider {
+            height: 1px;
+            background: linear-gradient(to right, #e0eafc 0%, #2274a5 50%, #e0eafc 100%);
+            border: none;
+            margin: 32px 0 22px 0;
+        }
+        .help-text {
+            color: #888;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+        @media (max-width: 700px) {
+            .container {padding: 12px 4vw;}
         }
     </style>
 </head>
 <body>
-    <h1>JSON 转 Excel 示例</h1>
-    <label for="jsonInput">输入 JSON 数据:</label>
-    <textarea id="jsonInput" rows="10" cols="50" placeholder="请输入 JSON 数据">
-[
+    <div class="container">
+        <h1><i class="fa-solid fa-exchange-alt"></i> JSON ↔ Excel 工具</h1>
+        <div class="section">
+            <label for="jsonInput"><i class="fa-solid fa-file-code"></i> 输入 JSON 数据:</label>
+            <div class="help-text">请输入标准 JSON 数组。例如：<code>[{"姓名":"张三","年龄":28}]</code></div>
+            <textarea id="jsonInput" rows="8" placeholder='[
     { "姓名": "张三", "年龄": 28, "城市": "北京" },
-    { "姓名": "李四", "年龄": 22, "城市": "上海" },
-    { "姓名": "王五", "年龄": 32, "城市": "广州" }
-]
-    </textarea>
-    <button id="exportBtn">导出为 Excel</button>
-
-    <hr>
-
-    <h1>Excel 转 JSON 示例</h1>
-    <label for="fileInput">选择 Excel 文件:</label>
-    <input type="file" id="fileInput" accept=".xlsx" />
-    <button id="importBtn">转 JSON</button>
-    
-    <label for="jsonOutput">导入的 JSON 数据:</label>
-    <textarea id="jsonOutput" rows="10" cols="50" placeholder="导入的 JSON 数据将显示在这里"></textarea>
-
+    { "姓名": "李四", "年龄": 22, "城市": "上海" }
+]'></textarea>
+            <button class="btn" id="exportBtn"><i class="fa-solid fa-file-export"></i> 导出为 Excel</button>
+        </div>
+        <hr class="divider">
+        <div class="section">
+            <label for="fileInput"><i class="fa-solid fa-file-excel"></i> 选择 Excel 文件:</label>
+            <input type="file" id="fileInput" accept=".xlsx" />
+            <button class="btn" id="importBtn"><i class="fa-solid fa-file-import"></i> 转 JSON</button>
+            <label for="jsonOutput" class="output-label"><i class="fa-solid fa-file-code"></i> 导入的 JSON 数据:</label>
+            <textarea id="jsonOutput" rows="8" placeholder="导入的 JSON 数据将显示在这里" readonly></textarea>
+        </div>
+    </div>
     <script>
         document.getElementById('exportBtn').addEventListener('click', function() {
-            // 获取用户输入的 JSON 数据
             const inputData = document.getElementById('jsonInput').value;
             let jsonData;
-
             try {
-                // 解析输入的 JSON 数据
                 jsonData = JSON.parse(inputData);
             } catch (e) {
-                alert('无效的 JSON 数据');
+                alert('无效的 JSON 数据，请检查格式！');
                 return;
             }
-
-            // 创建工作簿
             const wb = XLSX.utils.book_new();
-            // 将 JSON 数据转换为工作表
             const ws = XLSX.utils.json_to_sheet(jsonData);
-            // 将工作表添加到工作簿
             XLSX.utils.book_append_sheet(wb, ws, "数据");
-
-            // 获取当前时间并格式化为字符串
             const now = new Date();
             const fileName = `数据_${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}_${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}.xlsx`;
-
-            // 导出 Excel 文件
             XLSX.writeFile(wb, fileName);
         });
 
         document.getElementById('importBtn').addEventListener('click', function() {
             const fileInput = document.getElementById('fileInput');
             const file = fileInput.files[0];
-
             if (!file) {
                 alert('请先选择一个 Excel 文件');
                 return;
             }
-
             const reader = new FileReader();
             reader.onload = function(e) {
                 const data = new Uint8Array(e.target.result);
@@ -114,7 +142,6 @@
                 const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
                 document.getElementById('jsonOutput').value = JSON.stringify(jsonData, null, 2);
             };
-
             reader.readAsArrayBuffer(file);
         });
     </script>
