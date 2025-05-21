@@ -39,7 +39,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           # 仅上传特定的 HTML 文件
-          path: "jsonToExcel.html"
+          path: "index.html"
       - name: 部署到 GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
